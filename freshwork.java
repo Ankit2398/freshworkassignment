@@ -1,6 +1,4 @@
 package Test;
-
-
 import java.util.*;
 import java.io.*;
 import org.json.JSONObject;
@@ -33,8 +31,6 @@ class KeySizeExceeded extends Exception{
 class TimeExceeded extends Exception {
 
 }
-
-
 
 public class DataFile {
 	private static Instrumentation instrument;
@@ -76,7 +72,8 @@ public class DataFile {
     //CREATE method when LifeTime value is provided
     public void CreateEntrySet(String KeyValue, JSONObject DataValue, int LifeTime) throws Exception 
     {    
-         try{ if((instrument.getObjectSize((Object)DataValue)/1024)>16) // Checks whether size of JSONObject is more than 16 KB
+         try{ if((instrument.getObjectSize((Object)DataValue)/1024)>16)
+		 // Checks whether size of JSONObject is more than 16 KB
         	 throw new ValueSizeExceeded();
          else if(KeyValue.length()>32)
         	 throw new KeySizeExceeded();
@@ -91,11 +88,14 @@ public class DataFile {
             
         	JSONTokener tokenValue = new JSONTokener(read);
              JSONObject tempValue = new JSONObject(tokenValue);
-            if (tempValue.has(KeyValue)) //Validating key value pair
+            if (tempValue.has(KeyValue))
+		    //Validating key value pair
                 throw new DuplicateKey();
             JSONArray tArray = new JSONArray();
-            tArray.put(LifeTime);     // Adding  JSONOBject provided by user as first element
-            tArray.put(DataValue);  // Adding LifeTime value provided by user as second element
+            tArray.put(LifeTime);  
+		 // Adding  JSONOBject provided by user as first element
+            tArray.put(DataValue); 
+		 // Adding LifeTime value provided by user as second element
 
             LocalTime t = LocalTime.now();
             int TimeValue = t.toSecondOfDay();
@@ -122,9 +122,9 @@ public class DataFile {
     
     // CREATE method using only Key and Data value pair
     public void CreateEntrySet(String KeyValue, JSONObject DataValue) throws Exception 
-    {
+    {	
     	try {
-    	 if((instrument.getObjectSize((Object)DataValue)/1024)>16) // Checks whether the size of JSONObject is more than 16 KB
+    	 if((instrument.getObjectSize((Object)DataValue)/1024)>16) 
        	 throw new ValueSizeExceeded();
     	 else if(KeyValue.length()>32)
     		 throw new KeySizeExceeded();
@@ -139,7 +139,8 @@ public class DataFile {
             
         	JSONTokener tokenValue = new JSONTokener(read);
             JSONObject tempValue = new JSONObject(tokenValue);
-            if (tempValue.has(KeyValue)) //Validating  key value pair
+		 //Validating  key value pair
+            if (tempValue.has(KeyValue))
                 throw new DuplicateKey();
             JSONArray tArray = new JSONArray();
             tArray.put(DataValue); 
@@ -149,7 +150,9 @@ public class DataFile {
             int TimeValue = t.toSecondOfDay();
             tArray.put(TimeValue); 
             tempValue.put(KeyValue, tArray);
-            try (FileWriter fw = new FileWriter(DataPath,false)) //Values are Updated to the file
+		
+		 //Values are Updated to the file
+            try (FileWriter fw = new FileWriter(DataPath,false))
             {
                 fw.write(tempValue.toString());
                 fw.close();
@@ -175,13 +178,17 @@ public class DataFile {
             
         	JSONTokener tokenValue = new JSONTokener(read);
             JSONObject tempValue = new JSONObject(tokenValue);
-            if (tempValue.has(KeyValue)) //Validating key value pair
+		
+		 //Validating key value pair
+            if (tempValue.has(KeyValue))
             {
                 JSONArray tArray = new JSONArray();
                 tArray = tempValue.getJSONArray(KeyValue);
                 LocalTime t = LocalTime.now();
                 int PresentTime = t.toSecondOfDay();
-                if ((PresentTime - tArray.getInt(2)) < tArray.getInt(1)) //Life time of Key is checked
+		    
+		    //Life time of Key is checked
+                if ((PresentTime - tArray.getInt(2)) < tArray.getInt(1)) 
                     return tArray.getJSONObject(0);
                 else
                     throw new TimeExceeded();
@@ -201,25 +208,32 @@ public class DataFile {
 		return null;
     }
     // Delete JSONObject for Key
-    public void DeleteEntrySet(String KeyValue) throws Exception // Method for deleting a given < Key,JSONOBject > pair
+	// Method for deleting a given < Key,JSONOBject > pair
+	
+    public void DeleteEntrySet(String KeyValue) throws Exception 
     {
        
         try (FileReader read = new FileReader(DataPath))
         {
         	JSONTokener tokenValue= new JSONTokener(read);
             JSONObject tempValue = new JSONObject(tokenValue);
-            if (tempValue.has(KeyValue)) //Validating Key value pair
+		
+		//Validating Key value pair
+            if (tempValue.has(KeyValue)) 
             {
                 JSONArray tArray = new JSONArray();
                 tArray = tempValue.getJSONArray(KeyValue);
                 LocalTime t = LocalTime.now();
                 int PresentTime = t.toSecondOfDay();
-                if ((PresentTime - tArray.getInt(2)) < tArray.getInt(1)) //Checks the condition of life time of key and removes < Key,Value > pair
+		    //Checks the condition of life time of key and removes < Key,Value > pair
+		    
+                if ((PresentTime - tArray.getInt(2)) < tArray.getInt(1)) 
                     tempValue.remove(KeyValue);
                 else
                     throw new TimeExceeded();
 
-                try (FileWriter fw = new FileWriter(DataPath,false)) // Edited JSONObject is written back to the file
+                // Edited JSONObject is written back to the file
+		    try (FileWriter fw = new FileWriter(DataPath,false))
                 {
 
                     fw.write(tempValue.toString());
@@ -233,7 +247,7 @@ public class DataFile {
             catch (InvalidKey e) {
                 System.out.println("Invalid Key");
             } catch (IOException e) {
-                System.out.println("IO Exception have been Caught");
+                System.out.println("IO Exception has been Caught");
             }
 
          catch (TimeExceeded e) {
