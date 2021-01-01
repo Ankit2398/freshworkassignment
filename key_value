@@ -1,0 +1,3 @@
+A key–value database, or key–value store, is a data storage paradigm designed for storing, retrieving, and managing associative arrays, and a data structure
+more commonly known today as a dictionary or hash table. Dictionaries contain a collection of objects, or records, which in turn have many different fields within them,
+each containing data. These records are stored and retrieved using a key that uniquely identifies the record, and is used to find the data within the database.
